@@ -1,0 +1,15 @@
+Commands:
+---------
+wc -l < /usr/share/dict/words
+---------
+1c1,7
+< 479826
+---
+> wc: '<': No such file or directory
+> wc
+> -l
+> <
+> /usr/share/dict/words
+> Index 0: wc
+> I'm the parent process!
+---------
