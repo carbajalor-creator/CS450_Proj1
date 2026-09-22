@@ -10,6 +10,50 @@
 #include "parsetools.h"
 
 
+
+void simplecommands(char *arr[] , int size) {
+	//printf("the size of the array was: %d", size );
+
+	if (size == 0) {
+		printf("no.\n");
+		return;
+	}
+
+	//printf("index 0: %s\n", arr[0]);	
+	
+	pid_t pid;
+
+	for (int i = 0; i < size; i++) {
+		pid = fork();
+
+		if (pid < 0) {
+			printf("failed fork\n");
+			exit(1);
+		} else if (pid == 0) {
+			execlp(arr[i], arr[i], NULL);
+			/* Somehow this part of the code is getting hit when a command is longer
+			 * than one comamnd. ex: ps -u, ps -u yourusrname
+			 *
+			 *
+			 * Nevermind, -u nor yourusrname are indiviual commands. 
+			 * Just gotta add those parts of the strigns together then execlp
+			 *
+			 * Not even sure I need this for-loop now for the simple command.
+			 */
+			perror("You're not meant to see this...\n");
+
+		} else { wait(NULL); }
+
+	}
+	/*
+	for (int i = 0; i < size; i++) {
+		wait(NULL);
+	}*/
+
+}
+
+
+
 int main() {
 
     // Buffer for reading one line of input
@@ -32,14 +76,19 @@ int main() {
 
         int num_words = split_cmd_line(line, line_words);
 	
+	
+	//printf("num_words:  %d\n", num_words);
+	simplecommands(line_words, num_words);
+
 	// just trying to detect 'ps'
 	
 	
-
+	/* Placerholder code to show each array of line_words being printed
+	 *
         for (int i=0; i < num_words; i++) {
             printf("%s\n", line_words[i]);
         }
-
+	
 
 	printf("Index 0: %s\n", line_words[0]);
 
@@ -59,8 +108,8 @@ int main() {
 	
 	}
     }	
-
-    
+*/
+	}
     return 0;
 }
 
