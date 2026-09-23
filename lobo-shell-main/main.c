@@ -11,44 +11,20 @@
 
 
 
-void simplecommands(char *arr[] , int size) {
-	//printf("the size of the array was: %d", size );
-
-	if (size == 0) {
-		printf("no.\n");
-		return;
-	}
-
-	//printf("index 0: %s\n", arr[0]);	
-	
+void simplecommands(char *arr[]) {
 	pid_t pid;
 
-	for (int i = 0; i < size; i++) {
-		pid = fork();
+	pid = fork();
 
-		if (pid < 0) {
-			printf("failed fork\n");
-			exit(1);
-		} else if (pid == 0) {
-			execlp(arr[i], arr[i], NULL);
-			/* Somehow this part of the code is getting hit when a command is longer
-			 * than one comamnd. ex: ps -u, ps -u yourusrname
-			 *
-			 *
-			 * Nevermind, -u nor yourusrname are indiviual commands. 
-			 * Just gotta add those parts of the strigns together then execlp
-			 *
-			 * Not even sure I need this for-loop now for the simple command.
-			 */
-			perror("You're not meant to see this...\n");
+	if (pid < 0) {
+		printf("failed fork\n");
+		exit(1);
 
-		} else { wait(NULL); }
-
-	}
-	/*
-	for (int i = 0; i < size; i++) {
-		wait(NULL);
-	}*/
+	} else if (pid == 0) { //child process
+		execvp(arr[0], arr);
+		perror("if you see this..something has gone wrong.\n");
+		
+	} else { wait(NULL); } // parent process waits and reaps child
 
 }
 
@@ -75,41 +51,14 @@ int main() {
         }
 
         int num_words = split_cmd_line(line, line_words);
+	// passing line_words into simplecommands(arr);
+	// Will need a way to distinguish between simple commands 
+	// and those with pipes.
+	simplecommands(line_words);	
 	
 	
-	//printf("num_words:  %d\n", num_words);
-	simplecommands(line_words, num_words);
-
-	// just trying to detect 'ps'
 	
-	
-	/* Placerholder code to show each array of line_words being printed
-	 *
-        for (int i=0; i < num_words; i++) {
-            printf("%s\n", line_words[i]);
-        }
-	
-
-	printf("Index 0: %s\n", line_words[0]);
-
-	pid_t x = fork();
-
-	if (x < 0) {
-	
-	    printf("fork failed\n");
-	    exit(1);
-	} else if (x == 0) {
-	  // printf("I'm a child process!\n");
-	   execlp(line_words[0], line_words[0], line_words[1], line_words[2], NULL);
-	   perror("didn't exec properly");
-	} else {
-	//	printf("I'm the parent process!\n");
-		wait(NULL);
-	
-	}
-    }	
-*/
-	}
+    }
     return 0;
 }
 
